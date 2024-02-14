@@ -10,7 +10,7 @@ import {useSelector} from 'react-redux';
 import Loader from '../../../components/Loader';
 import {ALERT_TYPE, Toast} from 'react-native-alert-notification';
 import {Swipeable, GestureHandlerRootView} from 'react-native-gesture-handler';
-
+import {Dropdown} from 'react-native-element-dropdown';
 const data1 = [
   {label: 'Lawnmowers/ATVMotorcycle', value: 'lawnmowers_atvmotorcycle'},
   {
@@ -47,7 +47,10 @@ const data4 = [
   {label: '710/70R43', value: '11'},
   {label: 'Odd Tire / Inches', value: '12'},
 ];
-
+const data5 = [
+  {label: 'Yes', value: 'true'},
+  {label: 'No', value: 'false'},
+];
 const Generator = ({navigation, route}) => {
   const userData = useSelector(state => state.auth.userAccessKey);
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -73,11 +76,13 @@ const Generator = ({navigation, route}) => {
   const [semitruck, setsemitruck] = useState('');
   const [semi_super_singles, setsemi_super_singles] = useState('');
   const [semi_truck_with_rim, setsemi_truck_with_rim] = useState('');
+  const [tiresLeft, settiresLeft] = useState('');
+  const [backUs, setBackUs] = useState(false);
   const ref = useRef();
   const ref1 = useRef();
   const data = route?.params?.data;
   const orderId = route?.params?.orderId;
-  console.log("reponse from type ==", data);
+  console.log('reponse from type ==', data);
   const [active, setActive] = useState(data);
   const toggleScroll = () => {
     setScrollEnabled(!scrollEnabled);
@@ -139,13 +144,6 @@ const Generator = ({navigation, route}) => {
         textBody: 'Please selected passenger tires',
         autoClose: 1500,
       });
-    } else if (selectedtruck?.length === 0) {
-      Toast.show({
-        type: ALERT_TYPE.DANGER,
-        title: 'Error',
-        textBody: 'Please selected truck tires',
-        autoClose: 1500,
-      });
     } else {
       setShowindicator(true);
       var myHeaders = new Headers();
@@ -164,6 +162,8 @@ const Generator = ({navigation, route}) => {
       formdata.append('semi_truck', semitruck);
       formdata.append('semi_super_singles', semi_super_singles);
       formdata.append('semi_truck_with_rim', semi_truck_with_rim);
+      formdata.append('tiresLeft', tiresLeft);
+      formdata.append('backUs', backUs);
       formdata.append('payment_type', '');
       console.log('uplaod data ====>', formdata);
       var requestOptions = {
@@ -511,831 +511,853 @@ const Generator = ({navigation, route}) => {
   const LoadType = () => {
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={Theme.colors.primaryColor}
-        />
-        <View
-          style={{
-            height: 60,
-            width: '90%',
-            alignSelf: 'center',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-          }}>
-          <Icon
-            name="arrowleft"
-            type="antdesign"
-            color={'black'}
-            onPress={() => navigation.goBack()}
+        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={Theme.colors.primaryColor}
           />
-          <Text
+          <View
             style={{
-              fontSize: 20,
-              fontFamily: Theme.fontFamily.semibold,
-              color: 'black',
+              height: 60,
+              width: '90%',
+              alignSelf: 'center',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}>
-            State
+            <Icon
+              name="arrowleft"
+              type="antdesign"
+              color={'black'}
+              onPress={() => navigation.goBack()}
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: Theme.fontFamily.semibold,
+                color: 'black',
+              }}>
+              State
+            </Text>
+            <Icon name="arrowleft" type="antdesign" color={'transparent'} />
+          </View>
+          <Text
+            onPress={() => setActive('weight')}
+            style={{
+              color: Theme.colors.primaryColor,
+              fontFamily: Theme.fontFamily.bold,
+              fontSize: 20,
+              alignSelf: 'center',
+              marginTop: '40%',
+            }}>
+            Load By Weight
           </Text>
-          <Icon name="arrowleft" type="antdesign" color={'transparent'} />
+          <Text
+            onPress={() => setActive('tire')}
+            style={{
+              color: Theme.colors.primaryColor,
+              fontFamily: Theme.fontFamily.bold,
+              fontSize: 20,
+              alignSelf: 'center',
+              marginTop: 20,
+            }}>
+            Load By Tire
+          </Text>
         </View>
-        <Text
-          onPress={() => setActive('weight')}
-          style={{
-            color: Theme.colors.primaryColor,
-            fontFamily: Theme.fontFamily.bold,
-            fontSize: 20,
-            alignSelf: 'center',
-            marginTop: '40%',
-          }}>
-          Load By Weight
-        </Text>
-        <Text
-          onPress={() => setActive('tire')}
-          style={{
-            color: Theme.colors.primaryColor,
-            fontFamily: Theme.fontFamily.bold,
-            fontSize: 20,
-            alignSelf: 'center',
-            marginTop: 20,
-          }}>
-          Load By Tire
-        </Text>
-      </View>
-       </GestureHandlerRootView>
+      </GestureHandlerRootView>
     );
   };
 
   const TireState = () => {
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={Theme.colors.primaryColor}
-        />
-        {showindicator === true ? <Loader /> : null}
-        <View
-          style={{
-            height: 60,
-            width: '90%',
-            alignSelf: 'center',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-          }}>
-          <Icon
-            name="arrowleft"
-            type="antdesign"
-            color={'black'}
-            onPress={() => navigation.goBack()}
+        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={Theme.colors.primaryColor}
           />
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: Theme.fontFamily.semibold,
-              color: 'black',
-            }}>
-            State
-          </Text>
-          <Icon name="arrowleft" type="antdesign" color={'transparent'} />
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={scrollEnabled}
-          contentContainerStyle={{paddingBottom: 80}}>
+          {showindicator === true ? <Loader /> : null}
           <View
             style={{
-              height: 80,
+              height: 60,
               width: '90%',
               alignSelf: 'center',
-              marginTop: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Start Weight
-            </Text>
-            <TextInput
-              value={startWeight}
-              onChangeText={txt => setStartWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
+            <Icon
+              name="arrowleft"
+              type="antdesign"
+              color={'black'}
+              onPress={() => navigation.goBack()}
             />
-          </View>
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
             <Text
               style={{
+                fontSize: 20,
+                fontFamily: Theme.fontFamily.semibold,
                 color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
               }}>
-              End Weight
+              State
             </Text>
-            <TextInput
-              value={endWeight}
-              onChangeText={txt => setEndWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
+            <Icon name="arrowleft" type="antdesign" color={'transparent'} />
           </View>
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Total Weight in LBS
-            </Text>
-            <TextInput
-              value={totalWeight}
-              onChangeText={txt => setTotalWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
-          </View>
-          <View
-            style={{
-              height: 180,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Customer Signature:
-            </Text>
-
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+            contentContainerStyle={{paddingBottom: 80}}>
             <View
               style={{
-                height: 150,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                paddingHorizontal: 10,
-                marginTop: 5,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              <SignatureScreen
-                ref={ref}
-                onEnd={handleEnd}
-                onBegin={handleSignaturePress}
-                onOK={handleOK}
-                onEmpty={handleEmpty}
-                onClear={handleClear}
-                onGetData={handleData}
-                autoClear={false}
-                descriptionText={'hello signature'}
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Start Weight
+              </Text>
+              <TextInput
+                value={startWeight}
+                onChangeText={txt => setStartWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
               />
             </View>
-          </View>
-          <Pressable
-            onPress={() => handleClear()}
-            style={{
-              height: 30,
-              width: 100,
-              backgroundColor: Theme.colors.primaryColor,
-              borderRadius: 5,
-              marginLeft: '5%',
-              marginTop: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: 13,
-                fontFamily: Theme.fontFamily.medium,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Clear
-            </Text>
-          </Pressable>
-          <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
-            <Button title={'Submit'} onPress={() => WeightHandle()} />
-          </View>
-        </ScrollView>
-      </View>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                End Weight
+              </Text>
+              <TextInput
+                value={endWeight}
+                onChangeText={txt => setEndWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+            <View
+              style={{
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Total Weight in LBS
+              </Text>
+              <TextInput
+                value={totalWeight}
+                onChangeText={txt => setTotalWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+            <View
+              style={{
+                height: 180,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Customer Signature:
+              </Text>
+
+              <View
+                style={{
+                  height: 150,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}>
+                <SignatureScreen
+                  ref={ref}
+                  onEnd={handleEnd}
+                  onBegin={handleSignaturePress}
+                  onOK={handleOK}
+                  onEmpty={handleEmpty}
+                  onClear={handleClear}
+                  onGetData={handleData}
+                  autoClear={false}
+                  descriptionText={'hello signature'}
+                />
+              </View>
+            </View>
+            <Pressable
+              onPress={() => handleClear()}
+              style={{
+                height: 30,
+                width: 100,
+                backgroundColor: Theme.colors.primaryColor,
+                borderRadius: 5,
+                marginLeft: '5%',
+                marginTop: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 13,
+                  fontFamily: Theme.fontFamily.medium,
+                }}>
+                Clear
+              </Text>
+            </Pressable>
+            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+              <Button title={'Submit'} onPress={() => WeightHandle()} />
+            </View>
+          </ScrollView>
+        </View>
       </GestureHandlerRootView>
+    );
+  };
+  const renderItem = item => {
+    return (
+      <View
+        style={{
+          padding: 17,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            flex: 1,
+            fontSize: 14,
+            color: 'black',
+            textTransform: 'capitalize',
+            fontFamily: Theme.fontFamily.medium,
+          }}>
+          {item.label}
+        </Text>
+      </View>
     );
   };
   const WeigthState = () => {
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-        {showindicator === true ? <Loader /> : null}
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={Theme.colors.primaryColor}
-        />
-        <View
-          style={{
-            height: 60,
-            width: '90%',
-            alignSelf: 'center',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-          }}>
-          <Icon
-            name="arrowleft"
-            type="antdesign"
-            color={'black'}
-            onPress={() => navigation.goBack()}
+        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+          {showindicator === true ? <Loader /> : null}
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={Theme.colors.primaryColor}
           />
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: Theme.fontFamily.semibold,
-              color: 'black',
-            }}>
-            Generator
-          </Text>
-          <Icon name="arrowleft" type="antdesign" color={'transparent'} />
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={scrollEnabled}
-          contentContainerStyle={{paddingBottom: 10}}>
           <View
             style={{
-              height: 80,
+              height: 60,
               width: '90%',
               alignSelf: 'center',
-              marginTop: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Company Registration
-            </Text>
-            <TextInput
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
+            <Icon
+              name="arrowleft"
+              type="antdesign"
+              color={'black'}
+              onPress={() => navigation.goBack()}
             />
-          </View>
-          <View
-            style={{
-              paddingBottom: 2,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
             <Text
               style={{
+                fontSize: 20,
+                fontFamily: Theme.fontFamily.semibold,
                 color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
               }}>
-              Types of Passenger Tires
+              Generator
             </Text>
+            <Icon name="arrowleft" type="antdesign" color={'transparent'} />
+          </View>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+            contentContainerStyle={{paddingBottom: 10}}>
+            <View
+              style={{
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Company Registration
+              </Text>
+              <TextInput
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+            <View
+              style={{
+                paddingBottom: 2,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Types of Passenger Tires
+              </Text>
 
-            <MultiSelect
+              <MultiSelect
+                style={{
+                  height: 50,
+                  backgroundColor: 'transparent',
+                  borderColor: 'grey',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  paddingHorizontal: 10,
+                }}
+                placeholderStyle={{fontSize: 16}}
+                selectedTextStyle={{fontSize: 14}}
+                inputSearchStyle={{
+                  height: 40,
+                  fontSize: 16,
+                }}
+                iconStyle={{width: 20, height: 20}}
+                data={data1}
+                labelField="label"
+                valueField="value"
+                placeholder="Types of Passenger Tires"
+                value={selected}
+                onChange={item => {
+                  setSelected(item);
+                }}
+                selectedStyle={{
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                }}
+              />
+            </View>
+            {selected?.map(item => {
+              return item === 'lawnmowers_atvmotorcycle' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    No of Lawnmowers/ATVMotorcycle
+                  </Text>
+                  <TextInput
+                    value={atvmotorcycle}
+                    onChangeText={txt => setatvmotorcycle(txt)}
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === 'lawnmowers_atvmotorcyclewithrim' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    No of Lawnmowers/ATVMotorcycle With Rim
+                  </Text>
+                  <TextInput
+                    value={atvmotorcyclewithrim}
+                    onChangeText={txt => setatvmotorcyclewithrim(txt)}
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === 'passanger_lighttruck' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    No of Passanger/Light truck
+                  </Text>
+                  <TextInput
+                    value={lighttruck}
+                    onChangeText={txt => setlighttruck(txt)}
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === 'passanger_lighttruckwithrim' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    No of Passanger/Light truck with Rim
+                  </Text>
+                  <TextInput
+                    value={lighttruckwithrim}
+                    onChangeText={txt => setlighttruckwithrim(txt)}
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : null;
+            })}
+            <View
               style={{
-                height: 50,
-                backgroundColor: 'transparent',
-                borderColor: 'grey',
-                borderWidth: 1,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-              }}
-              placeholderStyle={{fontSize: 16}}
-              selectedTextStyle={{fontSize: 14}}
-              inputSearchStyle={{
-                height: 40,
-                fontSize: 16,
-              }}
-              iconStyle={{width: 20, height: 20}}
-              data={data1}
-              labelField="label"
-              valueField="value"
-              placeholder="Types of Passenger Tires"
-              value={selected}
-              onChange={item => {
-                setSelected(item);
-              }}
-              selectedStyle={{
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: 'grey',
-              }}
-            />
-          </View>
-          {selected?.map(item => {
-            return item === 'lawnmowers_atvmotorcycle' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  No of Lawnmowers/ATVMotorcycle
-                </Text>
-                <TextInput
-                  value={atvmotorcycle}
-                  onChangeText={txt => setatvmotorcycle(txt)}
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === 'lawnmowers_atvmotorcyclewithrim' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  No of Lawnmowers/ATVMotorcycle With Rim
-                </Text>
-                <TextInput
-                  value={atvmotorcyclewithrim}
-                  onChangeText={txt => setatvmotorcyclewithrim(txt)}
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === 'passanger_lighttruck' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  No of Passanger/Light truck
-                </Text>
-                <TextInput
-                  value={lighttruck}
-                  onChangeText={txt => setlighttruck(txt)}
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === 'passanger_lighttruckwithrim' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  No of Passanger/Light truck with Rim
-                </Text>
-                <TextInput
-                  value={lighttruckwithrim}
-                  onChangeText={txt => setlighttruckwithrim(txt)}
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : null;
-          })}
-          <View
-            style={{
-              // height: 80,
-              paddingBottom: 2,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
+                // height: 80,
+                paddingBottom: 2,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Types of Truck Tires
-            </Text>
-            <MultiSelect
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Types of Truck Tires
+              </Text>
+              <MultiSelect
+                style={{
+                  height: 50,
+                  backgroundColor: 'transparent',
+                  borderColor: 'grey',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  paddingHorizontal: 10,
+                }}
+                placeholderStyle={{fontSize: 16}}
+                selectedTextStyle={{fontSize: 14}}
+                inputSearchStyle={{
+                  height: 40,
+                  fontSize: 16,
+                }}
+                iconStyle={{width: 20, height: 20}}
+                data={data2}
+                labelField="label"
+                valueField="value"
+                placeholder="Types of Truck Tires"
+                value={selectedtruck}
+                onChange={item => {
+                  setSelectedtruck(item);
+                }}
+                selectedStyle={{
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                }}
+              />
+            </View>
+            {selectedtruck?.map(item => {
+              return item === 'semi_truck' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    Semi Truck
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === 'semi_super_singles' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    Semi Super Singles
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === 'semi_truck_with_rim' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    Semi Truck With Rim
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : null;
+            })}
+            <View
               style={{
-                height: 50,
-                backgroundColor: 'transparent',
-                borderColor: 'grey',
-                borderWidth: 1,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-              }}
-              placeholderStyle={{fontSize: 16}}
-              selectedTextStyle={{fontSize: 14}}
-              inputSearchStyle={{
-                height: 40,
-                fontSize: 16,
-              }}
-              iconStyle={{width: 20, height: 20}}
-              data={data2}
-              labelField="label"
-              valueField="value"
-              placeholder="Types of Truck Tires"
-              value={selectedtruck}
-              onChange={item => {
-                setSelectedtruck(item);
-              }}
-              selectedStyle={{
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: 'grey',
-              }}
-            />
-          </View>
-          {selectedtruck?.map(item => {
-            return item === 'semi_truck' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  Semi Truck
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === 'semi_super_singles' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  Semi Super Singles
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === 'semi_truck_with_rim' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  Semi Truck With Rim
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : null;
-          })}
-          <View
-            style={{
-              // height: 80,
-              paddingBottom: 2,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
+                // height: 80,
+                paddingBottom: 2,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Types of Agri Tires
-            </Text>
-            <MultiSelect
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Types of Agri Tires
+              </Text>
+              <MultiSelect
+                style={{
+                  height: 50,
+                  backgroundColor: 'transparent',
+                  borderColor: 'grey',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  paddingHorizontal: 10,
+                }}
+                placeholderStyle={{fontSize: 16}}
+                selectedTextStyle={{fontSize: 14}}
+                inputSearchStyle={{
+                  height: 40,
+                  fontSize: 16,
+                }}
+                iconStyle={{width: 20, height: 20}}
+                data={data3}
+                labelField="label"
+                valueField="value"
+                placeholder="Types of Agri Tires"
+                value={selectedtires}
+                onChange={item => {
+                  setSelectedtires(item);
+                }}
+                selectedStyle={{
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                }}
+              />
+            </View>
+            {selectedtires?.map(item => {
+              return item === '1' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    AG Med Truck 19.5/ Skid Steer
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '2' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    AG Med Truck 19.5/ With Rim
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '3' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    Farm Tractor $1.25 per, Last two digits
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : null;
+            })}
+            <View
               style={{
-                height: 50,
-                backgroundColor: 'transparent',
-                borderColor: 'grey',
-                borderWidth: 1,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-              }}
-              placeholderStyle={{fontSize: 16}}
-              selectedTextStyle={{fontSize: 14}}
-              inputSearchStyle={{
-                height: 40,
-                fontSize: 16,
-              }}
-              iconStyle={{width: 20, height: 20}}
-              data={data3}
-              labelField="label"
-              valueField="value"
-              placeholder="Types of Agri Tires"
-              value={selectedtires}
-              onChange={item => {
-                setSelectedtires(item);
-              }}
-              selectedStyle={{
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: 'grey',
-              }}
-            />
-          </View>
-          {selectedtires?.map(item => {
-            return item === '1' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  AG Med Truck 19.5/ Skid Steer
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '2' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  AG Med Truck 19.5/ With Rim
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '3' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  Farm Tractor $1.25 per, Last two digits
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : null;
-          })}
-          <View
-            style={{
-              // height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-              paddingBottom: 2,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
+                // height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+                paddingBottom: 2,
               }}>
-              Types of OTR Tires
-            </Text>
-            {/* <TextInput
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Types of OTR Tires
+              </Text>
+              {/* <TextInput
               style={{
                 height: 50,
                 width: '100%',
@@ -1349,1222 +1371,1308 @@ const Generator = ({navigation, route}) => {
                 marginTop: 5,
               }}
             /> */}
-            <MultiSelect
-              style={{
-                height: 50,
-                backgroundColor: 'transparent',
-                borderColor: 'grey',
-                borderWidth: 1,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-              }}
-              placeholderStyle={{fontSize: 16}}
-              selectedTextStyle={{fontSize: 14}}
-              inputSearchStyle={{
-                height: 40,
-                fontSize: 16,
-              }}
-              iconStyle={{width: 20, height: 20}}
-              data={data4}
-              labelField="label"
-              valueField="value"
-              placeholder=" Types of OTR Tires"
-              value={selectedotr}
-              onChange={item => {
-                setSelectedotr(item);
-              }}
-              selectedStyle={{
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: 'grey',
-              }}
-            />
-          </View>
-          {selectedotr?.map(item => {
-            return item === '1' ? (
-              <View
-                key={item}
+              <MultiSelect
                 style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  15.5-25
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '2' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  17.5-25 (Radial)
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '3' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  20.5-25 (Radial)
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '4' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  23.5-25 (Radial)
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '5' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  26.5-25 (Radial)
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '6' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  29.5-25 (Radial)
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '7' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  24.00R35
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '8' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  14.00-24 (Radial)
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '9' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  19.5L-24
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '10' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  18.4-38
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '11' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  710/70R43
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : item === '12' ? (
-              <View
-                key={item}
-                style={{
-                  height: 80,
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontFamily: Theme.fontFamily.medium,
-                    fontSize: 13,
-                  }}>
-                  Odd Tire / Inches
-                </Text>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '100%',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'grey',
-                    color: 'black',
-                    fontSize: 14,
-                    fontFamily: Theme.fontFamily.medium,
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                />
-              </View>
-            ) : null;
-          })}
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Payment Type
-            </Text>
-            <TextInput
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
-          </View>
-          <View
-            style={{
-              height: 180,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Customer Signature:
-            </Text>
-            <View
-              style={{
-                height: 150,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}>
-              <SignatureScreen
-                ref={ref}
-                onBegin={handleSignaturePress}
-                onEnd={handleEnd}
-                onOK={handleOK}
-                onEmpty={handleEmpty}
-                onClear={handleClear}
-                onGetData={handleData}
-                autoClear={false}
-                descriptionText={'hello signature'}
+                  height: 50,
+                  backgroundColor: 'transparent',
+                  borderColor: 'grey',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  paddingHorizontal: 10,
+                }}
+                placeholderStyle={{fontSize: 16}}
+                selectedTextStyle={{fontSize: 14}}
+                inputSearchStyle={{
+                  height: 40,
+                  fontSize: 16,
+                }}
+                iconStyle={{width: 20, height: 20}}
+                data={data4}
+                labelField="label"
+                valueField="value"
+                placeholder=" Types of OTR Tires"
+                value={selectedotr}
+                onChange={item => {
+                  setSelectedotr(item);
+                }}
+                selectedStyle={{
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                }}
               />
             </View>
-          </View>
-          <Pressable
-            onPress={() => handleClear()}
-            style={{
-              height: 30,
-              width: 100,
-              backgroundColor: Theme.colors.primaryColor,
-              borderRadius: 5,
-              marginLeft: '5%',
-              marginTop: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 13,
-                fontFamily: Theme.fontFamily.medium,
-              }}>
-              Clear
-            </Text>
-          </Pressable>
-          <View
-            style={{
-              height: 180,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Driver Signature:
-            </Text>
+            {selectedotr?.map(item => {
+              return item === '1' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    15.5-25
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '2' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    17.5-25 (Radial)
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '3' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    20.5-25 (Radial)
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '4' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    23.5-25 (Radial)
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '5' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    26.5-25 (Radial)
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '6' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    29.5-25 (Radial)
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '7' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    24.00R35
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '8' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    14.00-24 (Radial)
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '9' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    19.5L-24
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '10' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    18.4-38
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '11' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    710/70R43
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : item === '12' ? (
+                <View
+                  key={item}
+                  style={{
+                    height: 80,
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: Theme.fontFamily.medium,
+                      fontSize: 13,
+                    }}>
+                    Odd Tire / Inches
+                  </Text>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: 'grey',
+                      color: 'black',
+                      fontSize: 14,
+                      fontFamily: Theme.fontFamily.medium,
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                    }}
+                  />
+                </View>
+              ) : null;
+            })}
             <View
               style={{
-                height: 150,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                paddingHorizontal: 10,
-                marginTop: 5,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              <SignatureScreen
-                ref={ref1}
-                onBegin={handleSignaturePress}
-                onEnd={handleEnd1}
-                onOK={handleOK1}
-                onEmpty={handleEmpty1}
-                onClear={handleClear1}
-                onGetData={handleData1}
-                autoClear={false}
-                descriptionText={'hello signature'}
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Payment Type
+              </Text>
+              <TextInput
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
               />
             </View>
-          </View>
-          <Pressable
-            onPress={() => handleClear1()}
-            style={{
-              height: 30,
-              width: 100,
-              backgroundColor: Theme.colors.primaryColor,
-              borderRadius: 5,
-              marginLeft: '5%',
-              marginTop: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: 13,
-                fontFamily: Theme.fontFamily.medium,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Clear
-            </Text>
-          </Pressable>
-          <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
-            <Button title={'Submit'} onPress={() => BoxtypeHandle()} />
-          </View>
-        </ScrollView>
-      </View>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                No of tires left
+              </Text>
+              <TextInput
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+                value={tiresLeft}
+                onChangeText={txt => settiresLeft(txt)}
+              />
+            </View>
+            <View
+              style={{
+                // height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+                paddingBottom: 2,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Do you want us back?
+              </Text>
+
+              <Dropdown
+                style={{
+                  marginBottom: 10,
+                  height: 50,
+                  backgroundColor: 'transparent',
+                  borderRadius: 10,
+                  borderColor: Theme.colors.grey,
+                  padding: 10,
+                  borderWidth: 1,
+                }}
+                placeholderStyle={{
+                  fontSize: 14,
+                  color: 'grey',
+                  fontFamily: Theme.fontFamily.medium,
+                }}
+                selectedTextStyle={{
+                  fontSize: 14,
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                }}
+                iconStyle={{
+                  width: 20,
+                  height: 20,
+                }}
+                data={data5}
+                labelField="label"
+                valueField="value"
+                placeholder="No"
+                value={backUs}
+                onChange={item => {
+                  console.log('response from chage ==', item);
+                  setBackUs(item?.value);
+                }}
+                renderItem={renderItem}
+              />
+            </View>
+
+            <View
+              style={{
+                height: 180,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Customer Signature:
+              </Text>
+              <View
+                style={{
+                  height: 150,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}>
+                <SignatureScreen
+                  ref={ref}
+                  onBegin={handleSignaturePress}
+                  onEnd={handleEnd}
+                  onOK={handleOK}
+                  onEmpty={handleEmpty}
+                  onClear={handleClear}
+                  onGetData={handleData}
+                  autoClear={false}
+                  descriptionText={'hello signature'}
+                />
+              </View>
+            </View>
+            <Pressable
+              onPress={() => handleClear()}
+              style={{
+                height: 30,
+                width: 100,
+                backgroundColor: Theme.colors.primaryColor,
+                borderRadius: 5,
+                marginLeft: '5%',
+                marginTop: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 13,
+                  fontFamily: Theme.fontFamily.medium,
+                }}>
+                Clear
+              </Text>
+            </Pressable>
+            <View
+              style={{
+                height: 180,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Driver Signature:
+              </Text>
+              <View
+                style={{
+                  height: 150,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}>
+                <SignatureScreen
+                  ref={ref1}
+                  onBegin={handleSignaturePress}
+                  onEnd={handleEnd1}
+                  onOK={handleOK1}
+                  onEmpty={handleEmpty1}
+                  onClear={handleClear1}
+                  onGetData={handleData1}
+                  autoClear={false}
+                  descriptionText={'hello signature'}
+                />
+              </View>
+            </View>
+            <Pressable
+              onPress={() => handleClear1()}
+              style={{
+                height: 30,
+                width: 100,
+                backgroundColor: Theme.colors.primaryColor,
+                borderRadius: 5,
+                marginLeft: '5%',
+                marginTop: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 13,
+                  fontFamily: Theme.fontFamily.medium,
+                }}>
+                Clear
+              </Text>
+            </Pressable>
+            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+              <Button title={'Submit'} onPress={() => BoxtypeHandle()} />
+            </View>
+          </ScrollView>
+        </View>
       </GestureHandlerRootView>
     );
   };
   const TDF = () => {
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={Theme.colors.primaryColor}
-        />
-        {showindicator === true ? <Loader /> : null}
-        <View
-          style={{
-            height: 60,
-            width: '90%',
-            alignSelf: 'center',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-          }}>
-          <Icon
-            name="arrowleft"
-            type="antdesign"
-            color={'black'}
-            onPress={() => navigation.goBack()}
+        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={Theme.colors.primaryColor}
           />
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: Theme.fontFamily.semibold,
-              color: 'black',
-            }}>
-            TDF
-          </Text>
-          <Icon name="arrowleft" type="antdesign" color={'transparent'} />
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={scrollEnabled}
-          contentContainerStyle={{paddingBottom: 80}}>
+          {showindicator === true ? <Loader /> : null}
           <View
             style={{
-              height: 80,
+              height: 60,
               width: '90%',
               alignSelf: 'center',
-              marginTop: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Start Weight
-            </Text>
-            <TextInput
-              value={startWeight}
-              onChangeText={txt => setStartWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
+            <Icon
+              name="arrowleft"
+              type="antdesign"
+              color={'black'}
+              onPress={() => navigation.goBack()}
             />
-          </View>
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
             <Text
               style={{
+                fontSize: 20,
+                fontFamily: Theme.fontFamily.semibold,
                 color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
               }}>
-              End Weight
+              TDF
             </Text>
-            <TextInput
-              value={endWeight}
-              onChangeText={txt => setEndWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
+            <Icon name="arrowleft" type="antdesign" color={'transparent'} />
           </View>
-
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Total Weight in LBS
-            </Text>
-            <TextInput
-              value={totalWeight}
-              onChangeText={txt => setTotalWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
-          </View>
-
-          <View
-            style={{
-              height: 180,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Customer Signature:
-            </Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+            contentContainerStyle={{paddingBottom: 80}}>
             <View
               style={{
-                height: 150,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                paddingHorizontal: 10,
-                marginTop: 5,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              <SignatureScreen
-                ref={ref}
-                onBegin={handleSignaturePress}
-                onEnd={handleEnd}
-                onOK={handleOK}
-                onEmpty={handleEmpty}
-                onClear={handleClear}
-                onGetData={handleData}
-                autoClear={false}
-                descriptionText={'hello signature'}
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Start Weight
+              </Text>
+              <TextInput
+                value={startWeight}
+                onChangeText={txt => setStartWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
               />
             </View>
-          </View>
-          <Pressable
-            onPress={() => handleClear()}
-            style={{
-              height: 30,
-              width: 100,
-              backgroundColor: Theme.colors.primaryColor,
-              borderRadius: 5,
-              marginLeft: '5%',
-              marginTop: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: 13,
-                fontFamily: Theme.fontFamily.medium,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Clear
-            </Text>
-          </Pressable>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                End Weight
+              </Text>
+              <TextInput
+                value={endWeight}
+                onChangeText={txt => setEndWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
 
-          <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
-            <Button title={'Submit'} onPress={() => Tdfhandle()} />
-          </View>
-        </ScrollView>
-      </View>
+            <View
+              style={{
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Total Weight in LBS
+              </Text>
+              <TextInput
+                value={totalWeight}
+                onChangeText={txt => setTotalWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                height: 180,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Customer Signature:
+              </Text>
+              <View
+                style={{
+                  height: 150,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}>
+                <SignatureScreen
+                  ref={ref}
+                  onBegin={handleSignaturePress}
+                  onEnd={handleEnd}
+                  onOK={handleOK}
+                  onEmpty={handleEmpty}
+                  onClear={handleClear}
+                  onGetData={handleData}
+                  autoClear={false}
+                  descriptionText={'hello signature'}
+                />
+              </View>
+            </View>
+            <Pressable
+              onPress={() => handleClear()}
+              style={{
+                height: 30,
+                width: 100,
+                backgroundColor: Theme.colors.primaryColor,
+                borderRadius: 5,
+                marginLeft: '5%',
+                marginTop: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 13,
+                  fontFamily: Theme.fontFamily.medium,
+                }}>
+                Clear
+              </Text>
+            </Pressable>
+
+            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+              <Button title={'Submit'} onPress={() => Tdfhandle()} />
+            </View>
+          </ScrollView>
+        </View>
       </GestureHandlerRootView>
     );
   };
   const Steel = () => {
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={Theme.colors.primaryColor}
-        />
-        {showindicator === true ? <Loader /> : null}
-        <View
-          style={{
-            height: 60,
-            width: '90%',
-            alignSelf: 'center',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-          }}>
-          <Icon
-            name="arrowleft"
-            type="antdesign"
-            color={'black'}
-            onPress={() => navigation.goBack()}
+        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={Theme.colors.primaryColor}
           />
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: Theme.fontFamily.semibold,
-              color: 'black',
-            }}>
-            Tire Wire
-          </Text>
-          <Icon name="arrowleft" type="antdesign" color={'transparent'} />
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={scrollEnabled}
-          contentContainerStyle={{paddingBottom: 80}}>
+          {showindicator === true ? <Loader /> : null}
           <View
             style={{
-              height: 80,
+              height: 60,
               width: '90%',
               alignSelf: 'center',
-              marginTop: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Start Weight
-            </Text>
-            <TextInput
-              value={startWeight}
-              onChangeText={txt => setStartWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
+            <Icon
+              name="arrowleft"
+              type="antdesign"
+              color={'black'}
+              onPress={() => navigation.goBack()}
             />
-          </View>
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
             <Text
               style={{
+                fontSize: 20,
+                fontFamily: Theme.fontFamily.semibold,
                 color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
               }}>
-              BOL:
+              Tire Wire
             </Text>
-            <TextInput
-              value={bol}
-              onChangeText={txt => setBol(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
+            <Icon name="arrowleft" type="antdesign" color={'transparent'} />
           </View>
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              End Weight
-            </Text>
-            <TextInput
-              value={endWeight}
-              onChangeText={txt => setEndWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
-          </View>
-
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Total Weight in LBS
-            </Text>
-            <TextInput
-              value={totalWeight}
-              onChangeText={txt => setTotalWeight(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
-          </View>
-
-          <View
-            style={{
-              height: 180,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Customer Signature:
-            </Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+            contentContainerStyle={{paddingBottom: 80}}>
             <View
               style={{
-                height: 150,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                paddingHorizontal: 10,
-                marginTop: 5,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              <SignatureScreen
-                ref={ref}
-                onEnd={handleEnd}
-                onBegin={handleSignaturePress}
-                onOK={handleOK}
-                onEmpty={handleEmpty}
-                onClear={handleClear}
-                onGetData={handleData}
-                autoClear={false}
-                descriptionText={'hello signature'}
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Start Weight
+              </Text>
+              <TextInput
+                value={startWeight}
+                onChangeText={txt => setStartWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
               />
             </View>
-          </View>
-          <Pressable
-            onPress={() => handleClear()}
-            style={{
-              height: 30,
-              width: 100,
-              backgroundColor: Theme.colors.primaryColor,
-              borderRadius: 5,
-              marginLeft: '5%',
-              marginTop: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: 13,
-                fontFamily: Theme.fontFamily.medium,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Clear
-            </Text>
-          </Pressable>
-          <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
-            <Button title={'Submit'} onPress={() => SteelHandle()} />
-          </View>
-        </ScrollView>
-      </View>
-       </GestureHandlerRootView>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                BOL:
+              </Text>
+              <TextInput
+                value={bol}
+                onChangeText={txt => setBol(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+            <View
+              style={{
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                End Weight
+              </Text>
+              <TextInput
+                value={endWeight}
+                onChangeText={txt => setEndWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Total Weight in LBS
+              </Text>
+              <TextInput
+                value={totalWeight}
+                onChangeText={txt => setTotalWeight(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                height: 180,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Customer Signature:
+              </Text>
+              <View
+                style={{
+                  height: 150,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}>
+                <SignatureScreen
+                  ref={ref}
+                  onEnd={handleEnd}
+                  onBegin={handleSignaturePress}
+                  onOK={handleOK}
+                  onEmpty={handleEmpty}
+                  onClear={handleClear}
+                  onGetData={handleData}
+                  autoClear={false}
+                  descriptionText={'hello signature'}
+                />
+              </View>
+            </View>
+            <Pressable
+              onPress={() => handleClear()}
+              style={{
+                height: 30,
+                width: 100,
+                backgroundColor: Theme.colors.primaryColor,
+                borderRadius: 5,
+                marginLeft: '5%',
+                marginTop: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 13,
+                  fontFamily: Theme.fontFamily.medium,
+                }}>
+                Clear
+              </Text>
+            </Pressable>
+            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+              <Button title={'Submit'} onPress={() => SteelHandle()} />
+            </View>
+          </ScrollView>
+        </View>
+      </GestureHandlerRootView>
     );
   };
   const TrailerSwap = () => {
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={Theme.colors.primaryColor}
-        />
-        {showindicator === true ? <Loader /> : null}
-        <View
-          style={{
-            height: 60,
-            width: '90%',
-            alignSelf: 'center',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-          }}>
-          <Icon
-            name="arrowleft"
-            type="antdesign"
-            color={'black'}
-            onPress={() => navigation.goBack()}
+        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={Theme.colors.primaryColor}
           />
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: Theme.fontFamily.semibold,
-              color: 'black',
-            }}>
-            Trailer Swap
-          </Text>
-          <Icon name="arrowleft" type="antdesign" color={'transparent'} />
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={scrollEnabled}
-          contentContainerStyle={{paddingBottom: 80}}>
+          {showindicator === true ? <Loader /> : null}
           <View
             style={{
-              height: 80,
+              height: 60,
               width: '90%',
               alignSelf: 'center',
-              marginTop: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Trailer # Picked Up:
-            </Text>
-            <TextInput
-              value={trailerPickup}
-              onChangeText={txt => setTrailerPickup(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
+            <Icon
+              name="arrowleft"
+              type="antdesign"
+              color={'black'}
+              onPress={() => navigation.goBack()}
             />
-          </View>
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
             <Text
               style={{
+                fontSize: 20,
+                fontFamily: Theme.fontFamily.semibold,
                 color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
               }}>
-              Trailer # Droped:
+              Trailer Swap
             </Text>
-            <TextInput
-              value={trailerDrop}
-              onChangeText={txt => setTrailerDrop(txt)}
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
+            <Icon name="arrowleft" type="antdesign" color={'transparent'} />
           </View>
-
-          <View
-            style={{
-              height: 80,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Payment Type
-            </Text>
-            <TextInput
-              style={{
-                height: 50,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                color: 'black',
-                fontSize: 14,
-                fontFamily: Theme.fontFamily.medium,
-                paddingHorizontal: 10,
-                marginTop: 5,
-              }}
-            />
-          </View>
-
-          <View
-            style={{
-              height: 180,
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: Theme.fontFamily.medium,
-                fontSize: 13,
-              }}>
-              Customer Signature:
-            </Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+            contentContainerStyle={{paddingBottom: 80}}>
             <View
               style={{
-                height: 150,
-                width: '100%',
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: 'grey',
-                paddingHorizontal: 10,
-                marginTop: 5,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              <SignatureScreen
-                ref={ref}
-                onEnd={handleEnd}
-                onBegin={handleSignaturePress}
-                onOK={handleOK}
-                onEmpty={handleEmpty}
-                onClear={handleClear}
-                onGetData={handleData}
-                autoClear={false}
-                descriptionText={'hello signature'}
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Trailer # Picked Up:
+              </Text>
+              <TextInput
+                value={trailerPickup}
+                onChangeText={txt => setTrailerPickup(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
               />
             </View>
-          </View>
-          <Pressable
-            onPress={() => handleClear()}
-            style={{
-              height: 30,
-              width: 100,
-              backgroundColor: Theme.colors.primaryColor,
-              borderRadius: 5,
-              marginLeft: '5%',
-              marginTop: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: 13,
-                fontFamily: Theme.fontFamily.medium,
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
               }}>
-              Clear
-            </Text>
-          </Pressable>
-          <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
-            <Button title={'Submit'} onPress={() => SwapHandle()} />
-          </View>
-        </ScrollView>
-      </View>
-      {/* </View> */}
-       </GestureHandlerRootView>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Trailer # Droped:
+              </Text>
+              <TextInput
+                value={trailerDrop}
+                onChangeText={txt => setTrailerDrop(txt)}
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                height: 80,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Payment Type
+              </Text>
+              <TextInput
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                height: 180,
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Customer Signature:
+              </Text>
+              <View
+                style={{
+                  height: 150,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}>
+                <SignatureScreen
+                  ref={ref}
+                  onEnd={handleEnd}
+                  onBegin={handleSignaturePress}
+                  onOK={handleOK}
+                  onEmpty={handleEmpty}
+                  onClear={handleClear}
+                  onGetData={handleData}
+                  autoClear={false}
+                  descriptionText={'hello signature'}
+                />
+              </View>
+            </View>
+            <Pressable
+              onPress={() => handleClear()}
+              style={{
+                height: 30,
+                width: 100,
+                backgroundColor: Theme.colors.primaryColor,
+                borderRadius: 5,
+                marginLeft: '5%',
+                marginTop: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 13,
+                  fontFamily: Theme.fontFamily.medium,
+                }}>
+                Clear
+              </Text>
+            </Pressable>
+            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+              <Button title={'Submit'} onPress={() => SwapHandle()} />
+            </View>
+          </ScrollView>
+        </View>
+        {/* </View> */}
+      </GestureHandlerRootView>
     );
   };
   return active === 'state'
@@ -2577,6 +2685,8 @@ const Generator = ({navigation, route}) => {
     ? TDF()
     : active === 'steel'
     ? Steel()
-    :active === 'box_truck_route'?WeigthState():  TireState();
+    : active === 'box_truck_route'
+    ? WeigthState()
+    : TireState();
 };
 export default Generator;

@@ -37,3 +37,7 @@ const App = () => {
 };
 
 export default App;
+// +        def lintVitalAnalyzeTask = tasks.findByName("lintVitalAnalyze${targetName}")
+// +        if (lintVitalAnalyzeTask) {
+// +            lintVitalAnalyzeTask.dependsOn(fontCopyTask)
+// +        }

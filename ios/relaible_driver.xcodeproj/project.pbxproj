@@ -12,8 +12,12 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1BA0E054875E4DBC8E803126 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D322FBEED35407D8BB93C75 /* Poppins-Medium.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-relaible_driver-relaible_driverTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-relaible_driver-relaible_driverTests.a */; };
+		7DC9481167F9484EB1E01FF4 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A4F212A4AC74AD1986C5831 /* Poppins-SemiBold.ttf */; };
+		7F2B7001B7C6462DA98426ED /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4092B58DC1E452A84E781FA /* Poppins-Bold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		B100F3C5BB334D5ABC64EEB7 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AB24DB525704734B6D1AABB /* Poppins-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,11 +42,15 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = relaible_driver/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-relaible_driver-relaible_driverTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-relaible_driver-relaible_driverTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-relaible_driver.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-relaible_driver.debug.xcconfig"; path = "Target Support Files/Pods-relaible_driver/Pods-relaible_driver.debug.xcconfig"; sourceTree = "<group>"; };
+		4A4F212A4AC74AD1986C5831 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../src/assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-relaible_driver.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-relaible_driver.release.xcconfig"; path = "Target Support Files/Pods-relaible_driver/Pods-relaible_driver.release.xcconfig"; sourceTree = "<group>"; };
+		5AB24DB525704734B6D1AABB /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../src/assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-relaible_driver-relaible_driverTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-relaible_driver-relaible_driverTests.debug.xcconfig"; path = "Target Support Files/Pods-relaible_driver-relaible_driverTests/Pods-relaible_driver-relaible_driverTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5D322FBEED35407D8BB93C75 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../src/assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-relaible_driver.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-relaible_driver.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = relaible_driver/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-relaible_driver-relaible_driverTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-relaible_driver-relaible_driverTests.release.xcconfig"; path = "Target Support Files/Pods-relaible_driver-relaible_driverTests/Pods-relaible_driver-relaible_driverTests.release.xcconfig"; sourceTree = "<group>"; };
+		E4092B58DC1E452A84E781FA /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -122,6 +130,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				9448DD2D3FCB4A31A0191FEE /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -135,6 +144,17 @@
 				00E356EE1AD99517003FC87E /* relaible_driverTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9448DD2D3FCB4A31A0191FEE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E4092B58DC1E452A84E781FA /* Poppins-Bold.ttf */,
+				5D322FBEED35407D8BB93C75 /* Poppins-Medium.ttf */,
+				5AB24DB525704734B6D1AABB /* Poppins-Regular.ttf */,
+				4A4F212A4AC74AD1986C5831 /* Poppins-SemiBold.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -244,6 +264,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				7F2B7001B7C6462DA98426ED /* Poppins-Bold.ttf in Resources */,
+				1BA0E054875E4DBC8E803126 /* Poppins-Medium.ttf in Resources */,
+				B100F3C5BB334D5ABC64EEB7 /* Poppins-Regular.ttf in Resources */,
+				7DC9481167F9484EB1E01FF4 /* Poppins-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,7 +510,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L676XLH3V6;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = relaible_driver/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Relaible Driver";
@@ -516,7 +540,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L676XLH3V6;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = relaible_driver/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Relaible Driver";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
