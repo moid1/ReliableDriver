@@ -41,3 +41,13 @@ export default App;
 // +        if (lintVitalAnalyzeTask) {
 // +            lintVitalAnalyzeTask.dependsOn(fontCopyTask)
 // +        }
+
+
+
+// nickname,
+// phone number screen,
+// onboaridng font sizes,
+// availability according to given, its ui, 
+// notification
+// timer function
+// profile

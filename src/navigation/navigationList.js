@@ -12,6 +12,7 @@ import ManagerSignin from '../screens/auth/managersignin';
 import CreateOrder from '../screens/main/CreateOrder';
 import Generator from '../screens/main/home/Generator';
 import PDFViewer from '../screens/main/home/Pdf';
+import MapScreen from '../screens/main/home/map';
 export const stackNavigationList = [
 
 
@@ -36,6 +37,7 @@ export const stackNavigationList = [
 
   {name: 'patientnotification', component: PatientNotification},
   {name: 'CreateOrder', component: CreateOrder},
+  {name: 'map', component: MapScreen},
 
 
 ];
