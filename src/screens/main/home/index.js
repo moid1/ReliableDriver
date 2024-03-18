@@ -42,7 +42,7 @@ const Home = ({navigation}) => {
         .then(response => response.text())
         .then(result => {
           const data = JSON.parse(result);
-          // console.log(data?.data);
+          console.log(data);
 
           if (data?.status === true) {
             setOrders(data?.data);

@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet, View, Pressable, Text,Linking} from 'react-native';
+import {StyleSheet, View, Pressable, Text, Linking} from 'react-native';
 import Pdf from 'react-native-pdf';
 import {Icon} from '@rneui/themed';
 import Theme from '../../../Theme/Theme';
+import Button from '../../../components/Button/Button';
 const PDFViewer = ({navigation, route}) => {
   const data = route?.params?.data;
   console.log('response from params ==', data);
@@ -19,7 +20,7 @@ const PDFViewer = ({navigation, route}) => {
           flexDirection: 'row',
           marginTop: 10,
         }}>
-       <Pressable
+        <Pressable
           onPress={() => navigation.goBack()}
           style={{
             height: 50,
@@ -38,7 +39,11 @@ const PDFViewer = ({navigation, route}) => {
         </Pressable>
 
         <Pressable
-        onPress={()=>{Linking.openURL(`https://portal.reliabletiredisposalhq.com/${data}`)}}
+          onPress={() => {
+            Linking.openURL(
+              `https://portal.reliabletiredisposalhq.com/${data}`,
+            );
+          }}
           style={{
             height: 40,
             width: 60,
@@ -48,8 +53,15 @@ const PDFViewer = ({navigation, route}) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <Text style={{color:"white",fontSize:12,fontFamily:Theme.fontFamily.medium}}>Print</Text>
-          </Pressable>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 12,
+              fontFamily: Theme.fontFamily.medium,
+            }}>
+            Print
+          </Text>
+        </Pressable>
       </View>
       <Pdf
         trustAllCerts={false}
@@ -71,8 +83,22 @@ const PDFViewer = ({navigation, route}) => {
             `Link pressed: https://portal.reliabletiredisposalhq.com/${data}`,
           );
         }}
-        style={{flex: 1,backgroundColor:"white"}}
+        style={{flex: 1, backgroundColor: 'white'}}
       />
+      <View
+        style={{
+          height: 60,
+          width: '90%',
+          // backgroundColor: 'red',
+          position: 'absolute',
+          bottom: 0,
+          marginHorizontal: '5%',
+        }}>
+        <Button
+          title={'Done'}
+          onPress={() => navigation.replace('patienthome')}
+        />
+      </View>
     </View>
   );
 };

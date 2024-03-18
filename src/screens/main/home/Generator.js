@@ -57,6 +57,10 @@ const Generator = ({navigation, route}) => {
   const [selected, setSelected] = useState([]);
   const [selectedtruck, setSelectedtruck] = useState([]);
   const [selectedtires, setSelectedtires] = useState([]);
+  const [ag_med_truck_19_5_skid_steer, setag_med_truck_19_5_skid_steer] = useState('');
+  const [ag_med_truck_19_5_with_rim, setag_med_truck_19_5_with_rim] = useState('');
+  const [farm_tractor_last_two_digits, setfarm_tractor_last_two_digits] = useState('');
+
   const [selectedotr, setSelectedotr] = useState([]);
   const [showindicator, setShowindicator] = useState(false);
   const signatureRef = useRef();
@@ -164,6 +168,10 @@ const Generator = ({navigation, route}) => {
       formdata.append('semi_truck_with_rim', semi_truck_with_rim);
       formdata.append('tiresLeft', tiresLeft);
       formdata.append('backUs', backUs);
+      formdata.append('agri_tires_type', selectedtires);
+      formdata.append('ag_med_truck_19_5_skid_steer', ag_med_truck_19_5_skid_steer);
+      formdata.append('ag_med_truck_19_5_with_rim', ag_med_truck_19_5_with_rim);
+      formdata.append('farm_tractor_last_two_digits', farm_tractor_last_two_digits);
       formdata.append('payment_type', '');
       console.log('uplaod data ====>', formdata);
       var requestOptions = {
@@ -1273,6 +1281,8 @@ const Generator = ({navigation, route}) => {
                       paddingHorizontal: 10,
                       marginTop: 5,
                     }}
+                    value={ag_med_truck_19_5_skid_steer}
+                    onChangeText={(txt)=> setag_med_truck_19_5_skid_steer(txt)}
                   />
                 </View>
               ) : item === '2' ? (
@@ -1305,6 +1315,8 @@ const Generator = ({navigation, route}) => {
                       paddingHorizontal: 10,
                       marginTop: 5,
                     }}
+                    value={ag_med_truck_19_5_with_rim}
+                    onChangeText={(txt)=> setag_med_truck_19_5_with_rim(txt)}
                   />
                 </View>
               ) : item === '3' ? (
@@ -1337,6 +1349,8 @@ const Generator = ({navigation, route}) => {
                       paddingHorizontal: 10,
                       marginTop: 5,
                     }}
+                    value={farm_tractor_last_two_digits}
+                    onChangeText={(txt)=> setfarm_tractor_last_two_digits(txt)}
                   />
                 </View>
               ) : null;

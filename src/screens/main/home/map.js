@@ -108,7 +108,7 @@ const MapScreen = ({navigation, route}) => {
         const {code, message} = error;
         console.warn(code, message);
       });
-  }, []);
+  }, [pickuplocation?.latitude]);
   useEffect(() => {
     mapRef.current.animateToRegion({
       latitude: pickuplocation.latitude,
