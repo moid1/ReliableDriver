@@ -20,7 +20,6 @@ export const stackNavigationList = [
 
 
 
-
   {name: 'splash', component: SplashScreen},
   {name: 'signin', component: Signin},
   {name: 'reset', component: ResetPassword},
@@ -37,7 +36,7 @@ export const stackNavigationList = [
 
   {name: 'patientnotification', component: PatientNotification},
   {name: 'CreateOrder', component: CreateOrder},
-  {name: 'map', component: MapScreen},
 
+  {name: 'map', component: MapScreen},
 
 ];

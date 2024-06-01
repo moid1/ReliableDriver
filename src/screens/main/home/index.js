@@ -15,15 +15,48 @@ import {Icon} from '@rneui/themed';
 import {useFocusEffect} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
+import GetLocation from 'react-native-get-location';
+import Geocoder from 'react-native-geocoding';
 
 import moment from 'moment';
 const Home = ({navigation}) => {
   const userData = useSelector(state => state.auth.userAccessKey);
+  // console.log("response from user dara ====", userData);
   const [orders, setOrders] = useState([]);
   const [RoutesData, setRoutesData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [backUs, setBackUs] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
 
+  const [pickuplocation, setPickupLocation] = useState({
+    latitude: 33.6844,
+    longitude: 73.0479,
+  });
+useFocusEffect(
+  React.useCallback(()=>{
+
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 60000,
+      })
+        .then(location => {
+          Geocoder.init('AIzaSyATph3BCKxFTZucYVofwV2tuUIB-YXqHFg');
+          Geocoder.from(location.latitude, location.longitude)
+            .then(json => {
+              var addressComponent = json.results[0].formatted_address;
+              setCurrentLocation(addressComponent.toString());
+            })
+            .catch(error => console.warn(error));
+          setPickupLocation(location);
+          // onCenter();
+        })
+        .catch(error => {
+          const {code, message} = error;
+          console.warn(code, message);
+        });
+  
+  },[pickuplocation?.latitude])
+)
   useFocusEffect(
     React.useCallback(() => {
       var myHeaders = new Headers();
@@ -36,13 +69,13 @@ const Home = ({navigation}) => {
       };
 
       fetch(
-        'https://portal.reliabletiredisposalhq.com/api/get-driver-orders',
+        'https://manifest.reliabletiredisposal.online/api/get-driver-orders',
         requestOptions,
       )
         .then(response => response.text())
         .then(result => {
           const data = JSON.parse(result);
-          console.log(data);
+          // console.log(data);
 
           if (data?.status === true) {
             setOrders(data?.data);
@@ -66,12 +99,12 @@ const Home = ({navigation}) => {
       };
 
       fetch(
-        'https://portal.reliabletiredisposalhq.com/api/get-not-started-group-routes',
+        'https://manifest.reliabletiredisposal.online/api/get-not-started-group-routes',
         requestOptions,
       )
         .then(response => response.text())
         .then(result => {
-          console.log(result);
+          // console.log(result);
           const data = JSON.parse(result);
           if (data?.success === true) {
             setRoutesData(data?.data);
@@ -79,6 +112,39 @@ const Home = ({navigation}) => {
         })
         .catch(error => console.error(error));
     }, []),
+  );
+  useFocusEffect(
+    React.useCallback(() => {
+      const myHeaders = new Headers();
+      myHeaders.append('Accept', 'application/json');
+      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('Authorization', `Bearer ${userData?.token}`);
+      const raw = JSON.stringify({
+        users_location: currentLocation,
+        users_lat: pickuplocation?.latitude,
+        users_long: pickuplocation?.longitude,
+        // users_id: userData?.user?.id,
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      fetch(
+        'https://manifest.reliabletiredisposal.online/api/driver-location',
+        requestOptions,
+      )
+        .then(response => response.text())
+        .then(result => {
+          // console.log(result);
+          const data = JSON.parse(result);
+         console.log("response from update location==",data);
+        })
+        .catch(error => console.error(error));
+    },[currentLocation]),
   );
   const renderItem = item => {
     return (
@@ -360,7 +426,33 @@ const Home = ({navigation}) => {
                   {item?.load_type}
                 </Text>
               </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  // justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                <Text
+                  style={{
+                    color: Theme.colors.textColor,
+                    fontFamily: Theme.fontFamily.semibold,
+                    marginTop: 10,
+                    fontSize: 14,
+                  }}>
+                  Notes:{' '}
+                </Text>
 
+                <Text
+                  style={{
+                    color: 'black',
+                    fontFamily: Theme.fontFamily.regular,
+                    marginTop: 10,
+                    fontSize: 14,
+                  }} numberOfLines={2}>
+                  {item?.notes}
+                </Text>
+              </View>
               <View
                 style={{
                   height: 40,
@@ -434,6 +526,7 @@ const Home = ({navigation}) => {
                   navigation.navigate('generator', {
                     data: item?.load_type,
                     orderId: item?.id,
+                    order:item
                   })
                 }
                 style={{

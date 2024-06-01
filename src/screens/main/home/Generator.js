@@ -29,9 +29,9 @@ const data2 = [
   {label: 'Semi Truck With Rim', value: 'semi_truck_with_rim'},
 ];
 const data3 = [
-  {label: 'AG Med Truck 19.5/ Skid Steer', value: '1'},
-  {label: 'AG Med Truck 19.5/ With Rim', value: '2'},
-  {label: 'Farm Tractor $1.25 per, Last two digits', value: '3'},
+  {label: 'AG Med Truck 19.5/ Skid Steer', value: 'ag_med_truck_19_5_skid_steer'},
+  {label: 'AG Med Truck 19.5/ With Rim', value: 'ag_med_truck_19_5_with_rim'},
+  {label: 'Farm Tractor $1.25 per, Last two digits', value: 'farm_tractor_last_two_digits'},
 ];
 const data4 = [
   {label: '15.5-25', value: '1'},
@@ -53,6 +53,10 @@ const data5 = [
 ];
 const Generator = ({navigation, route}) => {
   const userData = useSelector(state => state.auth.userAccessKey);
+  const data = route?.params?.data;
+  const orderId = route?.params?.orderId;
+  const orderData = route?.params?.order;
+  console.log('reponse from single order ==', orderData?.payment_type);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [selected, setSelected] = useState([]);
   const [selectedtruck, setSelectedtruck] = useState([]);
@@ -60,7 +64,7 @@ const Generator = ({navigation, route}) => {
   const [ag_med_truck_19_5_skid_steer, setag_med_truck_19_5_skid_steer] = useState('');
   const [ag_med_truck_19_5_with_rim, setag_med_truck_19_5_with_rim] = useState('');
   const [farm_tractor_last_two_digits, setfarm_tractor_last_two_digits] = useState('');
-
+const [payment,setPayment]=useState(orderData?.payment_type)
   const [selectedotr, setSelectedotr] = useState([]);
   const [showindicator, setShowindicator] = useState(false);
   const signatureRef = useRef();
@@ -84,9 +88,7 @@ const Generator = ({navigation, route}) => {
   const [backUs, setBackUs] = useState(false);
   const ref = useRef();
   const ref1 = useRef();
-  const data = route?.params?.data;
-  const orderId = route?.params?.orderId;
-  console.log('reponse from type ==', data);
+
   const [active, setActive] = useState(data);
   const toggleScroll = () => {
     setScrollEnabled(!scrollEnabled);
@@ -172,7 +174,7 @@ const Generator = ({navigation, route}) => {
       formdata.append('ag_med_truck_19_5_skid_steer', ag_med_truck_19_5_skid_steer);
       formdata.append('ag_med_truck_19_5_with_rim', ag_med_truck_19_5_with_rim);
       formdata.append('farm_tractor_last_two_digits', farm_tractor_last_two_digits);
-      formdata.append('payment_type', '');
+      formdata.append('payment_type', payment);
       console.log('uplaod data ====>', formdata);
       var requestOptions = {
         method: 'POST',
@@ -182,7 +184,7 @@ const Generator = ({navigation, route}) => {
       };
 
       fetch(
-        'https://portal.reliabletiredisposalhq.com/api/fulfill-box',
+        'https://manifest.reliabletiredisposal.online/api/fulfill-box',
         requestOptions,
       )
         .then(response => response.text())
@@ -257,7 +259,7 @@ const Generator = ({navigation, route}) => {
       };
 
       fetch(
-        'https://portal.reliabletiredisposalhq.com/api/trailer-swap-order',
+        'https://manifest.reliabletiredisposal.online/api/trailer-swap-order',
         requestOptions,
       )
         .then(response => response.text())
@@ -333,7 +335,7 @@ const Generator = ({navigation, route}) => {
       };
 
       fetch(
-        'https://portal.reliabletiredisposalhq.com/api/tdf-order',
+        'https://manifest.reliabletiredisposal.online/api/tdf-order',
         requestOptions,
       )
         .then(response => response.text())
@@ -414,7 +416,7 @@ const Generator = ({navigation, route}) => {
       };
 
       fetch(
-        'https://portal.reliabletiredisposalhq.com/api/steel-order',
+        'https://manifest.reliabletiredisposal.online/api/steel-order',
         requestOptions,
       )
         .then(response => response.text())
@@ -473,7 +475,7 @@ const Generator = ({navigation, route}) => {
     };
 
     fetch(
-      'https://portal.reliabletiredisposalhq.com/api/state-weight',
+      'https://manifest.reliabletiredisposal.online/api/state-weight',
       requestOptions,
     )
       .then(response => response.text())
@@ -1135,6 +1137,8 @@ const Generator = ({navigation, route}) => {
                       paddingHorizontal: 10,
                       marginTop: 5,
                     }}
+                    value={semitruck}
+                    onChangeText={txt => setsemitruck(txt)}
                   />
                 </View>
               ) : item === 'semi_super_singles' ? (
@@ -1167,6 +1171,8 @@ const Generator = ({navigation, route}) => {
                       paddingHorizontal: 10,
                       marginTop: 5,
                     }}
+                    value={semi_super_singles}
+                    onChangeText={txt => setsemi_super_singles(txt)}
                   />
                 </View>
               ) : item === 'semi_truck_with_rim' ? (
@@ -1199,6 +1205,8 @@ const Generator = ({navigation, route}) => {
                       paddingHorizontal: 10,
                       marginTop: 5,
                     }}
+                    value={semi_truck_with_rim}
+                    onChangeText={txt => setsemi_truck_with_rim(txt)}
                   />
                 </View>
               ) : null;
@@ -1251,7 +1259,7 @@ const Generator = ({navigation, route}) => {
               />
             </View>
             {selectedtires?.map(item => {
-              return item === '1' ? (
+              return item === 'ag_med_truck_19_5_skid_steer' ? (
                 <View
                   key={item}
                   style={{
@@ -1285,7 +1293,7 @@ const Generator = ({navigation, route}) => {
                     onChangeText={(txt)=> setag_med_truck_19_5_skid_steer(txt)}
                   />
                 </View>
-              ) : item === '2' ? (
+              ) : item === 'ag_med_truck_19_5_with_rim' ? (
                 <View
                   key={item}
                   style={{
@@ -1319,7 +1327,7 @@ const Generator = ({navigation, route}) => {
                     onChangeText={(txt)=> setag_med_truck_19_5_with_rim(txt)}
                   />
                 </View>
-              ) : item === '3' ? (
+              ) : item === 'farm_tractor_last_two_digits' ? (
                 <View
                   key={item}
                   style={{
@@ -1831,6 +1839,9 @@ const Generator = ({navigation, route}) => {
                   paddingHorizontal: 10,
                   marginTop: 5,
                 }}
+                editable={false}
+                value={payment}
+                onChangeText={txt => setPayment(txt)}
               />
             </View>
             <View

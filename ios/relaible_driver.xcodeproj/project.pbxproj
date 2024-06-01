@@ -525,7 +525,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.relaible-driver";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.relaible_driver";
 				PRODUCT_NAME = relaible_driver;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -554,7 +554,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.relaible-driver";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.relaible_driver";
 				PRODUCT_NAME = relaible_driver;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
