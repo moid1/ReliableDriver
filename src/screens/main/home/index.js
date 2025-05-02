@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,16 +10,16 @@ import {
 } from 'react-native';
 import Theme from '../../../Theme/Theme';
 import LinearGradient from 'react-native-linear-gradient';
-import {Icon} from '@rneui/themed';
+import { Icon } from '@rneui/themed';
 // import {StatusBar} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {Dropdown} from 'react-native-element-dropdown';
+import { useFocusEffect } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { Dropdown } from 'react-native-element-dropdown';
 import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
 
 import moment from 'moment';
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   const userData = useSelector(state => state.auth.userAccessKey);
   // console.log("response from user dara ====", userData);
   const [orders, setOrders] = useState([]);
@@ -27,20 +27,21 @@ const Home = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [backUs, setBackUs] = useState('');
   const [currentLocation, setCurrentLocation] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const [pickuplocation, setPickupLocation] = useState({
     latitude: 33.6844,
     longitude: 73.0479,
   });
-useFocusEffect(
-  React.useCallback(()=>{
+  useFocusEffect(
+    React.useCallback(() => {
 
       GetLocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 60000,
       })
         .then(location => {
-          Geocoder.init('AIzaSyATph3BCKxFTZucYVofwV2tuUIB-YXqHFg');
+          Geocoder.init('AIzaSyAXsXxGcLCW2GFr9a9rHU0FTo41Q-v-bZE');
           Geocoder.from(location.latitude, location.longitude)
             .then(json => {
               var addressComponent = json.results[0].formatted_address;
@@ -51,12 +52,12 @@ useFocusEffect(
           // onCenter();
         })
         .catch(error => {
-          const {code, message} = error;
+          const { code, message } = error;
           console.warn(code, message);
         });
-  
-  },[pickuplocation?.latitude])
-)
+
+    }, [pickuplocation?.latitude])
+  )
   useFocusEffect(
     React.useCallback(() => {
       var myHeaders = new Headers();
@@ -104,7 +105,7 @@ useFocusEffect(
       )
         .then(response => response.text())
         .then(result => {
-          // console.log(result);
+          console.log(result);
           const data = JSON.parse(result);
           if (data?.success === true) {
             setRoutesData(data?.data);
@@ -141,10 +142,10 @@ useFocusEffect(
         .then(result => {
           // console.log(result);
           const data = JSON.parse(result);
-         console.log("response from update location==",data);
+          console.log("response from update location==", data);
         })
         .catch(error => console.error(error));
-    },[currentLocation]),
+    }, [currentLocation]),
   );
   const renderItem = item => {
     return (
@@ -169,7 +170,7 @@ useFocusEffect(
     );
   };
   return (
-    <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+    <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
       {/* <StatusBar
         barStyle={'light-content'}
         backgroundColor={Theme.colors.primaryColor}
@@ -230,13 +231,13 @@ useFocusEffect(
           <Image
             source={require('../../../assets/bell.png')}
             resizeMode="contain"
-            style={{height: 25, width: 25, borderRadius: 25}}
+            style={{ height: 25, width: 25, borderRadius: 25 }}
           />
         </Pressable>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 120}}>
+        contentContainerStyle={{ paddingBottom: 120 }}>
         {/* <View
           style={{
             height: 55,
@@ -290,7 +291,7 @@ useFocusEffect(
             borderColor: Theme.colors.primaryColor,
             padding: 10,
             borderWidth: 1,
-            marginTop: 10,elevation:2,backgroundColor:"white",
+            marginTop: 10, elevation: 2, backgroundColor: "white",
           }}
           placeholderStyle={{
             fontSize: 14,
@@ -325,7 +326,7 @@ useFocusEffect(
 
             if (foundObject) {
               console.log('Found object:', foundObject);
-              navigation.navigate('map', {data: foundObject});
+              navigation.navigate('map', { data: foundObject });
             } else {
               console.log('Object not found');
             }
@@ -343,6 +344,51 @@ useFocusEffect(
             marginBottom: 10,
             marginTop: 20,
           }}>
+
+          <Pressable
+            onPress={async () => {
+              setLoading(true); // Set loading to true when the request starts
+
+              try {
+                const myHeaders = new Headers();
+                myHeaders.append('Authorization', `Bearer ${userData?.token}`);
+
+                const requestOptions = {
+                  method: 'GET',
+                  headers: myHeaders,
+                  redirect: 'follow',
+                };
+
+                const response = await fetch(
+                  'https://manifest.reliabletiredisposal.online/api/get-driver-orders',
+                  requestOptions
+                );
+                const result = await response.text();
+                const data = JSON.parse(result);
+
+                if (data?.status === true) {
+                  setOrders(data?.data);
+                }
+              } catch (error) {
+                console.log('error', error);
+              }
+              finally {
+                setLoading(false); // Set loading to false after the request is complete
+              }
+            }}
+          >
+            <Text
+              style={{
+                color: Theme.colors.primaryColor,
+                fontSize: 14,
+                fontFamily: Theme.fontFamily.medium,
+              }}
+            >
+            {loading ? 'Loading...' : 'Refresh'} 
+            </Text>
+          </Pressable>
+
+
           <Text
             style={{
               color: '#2D2D2D',
@@ -382,7 +428,7 @@ useFocusEffect(
                 }}>
                 Business Name:{' '}
                 <Text
-                  style={{fontFamily: Theme.fontFamily.regular, fontSize: 14}}>
+                  style={{ fontFamily: Theme.fontFamily.regular, fontSize: 14 }}>
                   {item?.customer?.business_name}
                 </Text>
               </Text>
@@ -395,7 +441,7 @@ useFocusEffect(
                 }}>
                 POC Name:{' '}
                 <Text
-                  style={{fontFamily: Theme.fontFamily.regular, fontSize: 14}}>
+                  style={{ fontFamily: Theme.fontFamily.regular, fontSize: 14 }}>
                   {item?.customer?.poc_name}
                 </Text>
               </Text>
@@ -494,7 +540,7 @@ useFocusEffect(
                       marginLeft: 5,
                       marginTop: 2,
                     }}>
-                    {moment(item?.created_at).format('hh:mm')}
+                    {moment(item?.delivery_date).format('hh:mm')}
                   </Text>
                 </View>
 
@@ -517,7 +563,7 @@ useFocusEffect(
                       fontSize: 12,
                       marginLeft: 5,
                     }}>
-                    {moment(item?.created_at).format('DD/MM/YYYY')}
+                    {moment(item?.delivery_date).format('DD/MM/YYYY')}
                   </Text>
                 </View>
               </View>
@@ -526,7 +572,7 @@ useFocusEffect(
                   navigation.navigate('generator', {
                     data: item?.load_type,
                     orderId: item?.id,
-                    order:item
+                    order: item
                   })
                 }
                 style={{
@@ -601,7 +647,7 @@ useFocusEffect(
                     key={item?.id}
                     onPress={() => {
                       setModalVisible(false);
-                      navigation.navigate('map', {data: item});
+                      navigation.navigate('map', { data: item });
                     }}
                     style={{
                       height: 50,

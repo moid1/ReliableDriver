@@ -91,7 +91,7 @@ const MapScreen = ({navigation, route}) => {
     return R * c; // Distance in meters
   };
   useEffect(() => {
-    Geocoder.init('AIzaSyATph3BCKxFTZucYVofwV2tuUIB-YXqHFg');
+    Geocoder.init('AIzaSyAXsXxGcLCW2GFr9a9rHU0FTo41Q-v-bZE');
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `Bearer ${userData?.token}`);
 
@@ -153,7 +153,7 @@ const MapScreen = ({navigation, route}) => {
       timeout: 60000,
     })
       .then(location => {
-        Geocoder.init('AIzaSyATph3BCKxFTZucYVofwV2tuUIB-YXqHFg');
+        Geocoder.init('AIzaSyAXsXxGcLCW2GFr9a9rHU0FTo41Q-v-bZE');
         Geocoder.from(location.latitude, location.longitude)
           .then(json => {
             var addressComponent = json.results[0].formatted_address;
@@ -307,7 +307,7 @@ const MapScreen = ({navigation, route}) => {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
               }}
-              apikey={'AIzaSyATph3BCKxFTZucYVofwV2tuUIB-YXqHFg'}
+              apikey={'AIzaSyAXsXxGcLCW2GFr9a9rHU0FTo41Q-v-bZE'}
               strokeWidth={2}
               strokeColor="blue"
               // onReady={result => {
@@ -341,7 +341,7 @@ const MapScreen = ({navigation, route}) => {
               latitudeDelta: LATITUDE_DELTA,
               longitudeDelta: LONGITUDE_DELTA,
             }}
-            apikey={'AIzaSyATph3BCKxFTZucYVofwV2tuUIB-YXqHFg'}
+            apikey={'AIzaSyAXsXxGcLCW2GFr9a9rHU0FTo41Q-v-bZE'}
             strokeWidth={2}
             strokeColor="blue"
             optimizeWaypoints={true}

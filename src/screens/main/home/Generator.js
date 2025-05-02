@@ -1,62 +1,62 @@
-import React, {useState, useRef} from 'react';
-import {View, Text, ScrollView, TextInput, Pressable} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, ScrollView, TextInput, Pressable } from 'react-native';
 import Theme from '../../../Theme/Theme';
-import {Icon} from '@rneui/themed';
-import {StatusBar} from 'react-native';
+import { Icon } from '@rneui/themed';
+import { StatusBar } from 'react-native';
 import Button from '../../../components/Button/Button';
 import SignatureScreen from 'react-native-signature-canvas';
-import {MultiSelect} from 'react-native-element-dropdown';
-import {useSelector} from 'react-redux';
+import { MultiSelect } from 'react-native-element-dropdown';
+import { useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
-import {ALERT_TYPE, Toast} from 'react-native-alert-notification';
-import {Swipeable, GestureHandlerRootView} from 'react-native-gesture-handler';
-import {Dropdown} from 'react-native-element-dropdown';
+import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
+import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Dropdown } from 'react-native-element-dropdown';
 const data1 = [
-  {label: 'Lawnmowers/ATVMotorcycle', value: 'lawnmowers_atvmotorcycle'},
+  { label: 'Lawnmowers/ATVMotorcycle', value: 'lawnmowers_atvmotorcycle' },
   {
     label: 'Lawnmowers/ATVMotorcycle With Rim',
     value: 'lawnmowers_atvmotorcyclewithrim',
   },
-  {label: 'Passenger/Light truck', value: 'passanger_lighttruck'},
+  { label: 'Passenger/Light truck', value: 'passanger_lighttruck' },
   {
     label: 'Passenger/Light truck With Rim',
     value: 'passanger_lighttruckwithrim',
   },
 ];
 const data2 = [
-  {label: 'Semi Truck', value: 'semi_truck'},
-  {label: 'Semi Super Singles', value: 'semi_super_singles'},
-  {label: 'Semi Truck With Rim', value: 'semi_truck_with_rim'},
+  { label: 'Semi Truck', value: 'semi_truck' },
+  { label: 'Semi Super Singles', value: 'semi_super_singles' },
+  { label: 'Semi Truck With Rim', value: 'semi_truck_with_rim' },
 ];
 const data3 = [
-  {label: 'AG Med Truck 19.5/ Skid Steer', value: 'ag_med_truck_19_5_skid_steer'},
-  {label: 'AG Med Truck 19.5/ With Rim', value: 'ag_med_truck_19_5_with_rim'},
-  {label: 'Farm Tractor $1.25 per, Last two digits', value: 'farm_tractor_last_two_digits'},
+  { label: 'AG Med Truck 19.5/ Skid Steer', value: 'ag_med_truck_19_5_skid_steer' },
+  { label: 'AG Med Truck 19.5/ With Rim', value: 'ag_med_truck_19_5_with_rim' },
+  { label: 'Farm Tractor $1.25 per, Last two digits', value: 'farm_tractor_last_two_digits' },
 ];
 const data4 = [
-  {label: '15.5-25', value: '1'},
-  {label: '17.5-25 (Radial)', value: '2'},
-  {label: '20.5-25 (Radial)', value: '3'},
-  {label: '23.5-25 (Radial)', value: '4'},
-  {label: '26.5-25 (Radial)', value: '5'},
-  {label: '29.5-25 (Radial)', value: '6'},
-  {label: '24.00R35', value: '7'},
-  {label: '14.00-24 (Radial)', value: '8'},
-  {label: '19.5L-24', value: '9'},
-  {label: '18.4-38', value: '10'},
-  {label: '710/70R43', value: '11'},
-  {label: 'Odd Tire / Inches', value: '12'},
+  { label: '15.5-25', value: '1' },
+  { label: '17.5-25 (Radial)', value: '2' },
+  { label: '20.5-25 (Radial)', value: '3' },
+  { label: '23.5-25 (Radial)', value: '4' },
+  { label: '26.5-25 (Radial)', value: '5' },
+  { label: '29.5-25 (Radial)', value: '6' },
+  { label: '24.00R35', value: '7' },
+  { label: '14.00-24 (Radial)', value: '8' },
+  { label: '19.5L-24', value: '9' },
+  { label: '18.4-38', value: '10' },
+  { label: '710/70R43', value: '11' },
+  { label: 'Odd Tire / Inches', value: 'odd_tire' },
 ];
 const data5 = [
-  {label: 'Yes', value: 'true'},
-  {label: 'No', value: 'false'},
+  { label: 'Yes', value: 'true' },
+  { label: 'No', value: 'false' },
 ];
-const Generator = ({navigation, route}) => {
+const Generator = ({ navigation, route }) => {
   const userData = useSelector(state => state.auth.userAccessKey);
   const data = route?.params?.data;
   const orderId = route?.params?.orderId;
   const orderData = route?.params?.order;
-  console.log('reponse from single order ==', orderData?.payment_type);
+  console.log('reponse from single order ==', orderData?.customer?.charge_type);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [selected, setSelected] = useState([]);
   const [selectedtruck, setSelectedtruck] = useState([]);
@@ -64,7 +64,7 @@ const Generator = ({navigation, route}) => {
   const [ag_med_truck_19_5_skid_steer, setag_med_truck_19_5_skid_steer] = useState('');
   const [ag_med_truck_19_5_with_rim, setag_med_truck_19_5_with_rim] = useState('');
   const [farm_tractor_last_two_digits, setfarm_tractor_last_two_digits] = useState('');
-const [payment,setPayment]=useState(orderData?.payment_type)
+  const [payment, setPayment] = useState(orderData?.customer?.charge_type)
   const [selectedotr, setSelectedotr] = useState([]);
   const [showindicator, setShowindicator] = useState(false);
   const signatureRef = useRef();
@@ -84,6 +84,9 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   const [semitruck, setsemitruck] = useState('');
   const [semi_super_singles, setsemi_super_singles] = useState('');
   const [semi_truck_with_rim, setsemi_truck_with_rim] = useState('');
+
+  const [otr_tire, set_otr_tires] = useState('');
+
   const [tiresLeft, settiresLeft] = useState('');
   const [backUs, setBackUs] = useState(false);
   const ref = useRef();
@@ -143,7 +146,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   };
   // exact
   const BoxtypeHandle = () => {
-    if (selected?.length === 0) {
+    if (false) {
       Toast.show({
         type: ALERT_TYPE.DANGER,
         title: 'Error',
@@ -151,7 +154,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
         autoClose: 1500,
       });
     } else {
-      setShowindicator(true);
+      // setShowindicator(true);
       var myHeaders = new Headers();
       myHeaders.append('Authorization', `Bearer ${userData?.token}`);
 
@@ -174,8 +177,16 @@ const [payment,setPayment]=useState(orderData?.payment_type)
       formdata.append('ag_med_truck_19_5_skid_steer', ag_med_truck_19_5_skid_steer);
       formdata.append('ag_med_truck_19_5_with_rim', ag_med_truck_19_5_with_rim);
       formdata.append('farm_tractor_last_two_digits', farm_tractor_last_two_digits);
+      formdata.append('agri_tires_type', selectedtires);
+      formdata.append('otr_tires_type', selectedotr);
+
+      formdata.append('odd_tire', otr_tire);
+
       formdata.append('payment_type', payment);
-      console.log('uplaod data ====>', formdata);
+console.log(selectedotr);
+      console.log(otr_tire);
+
+
       var requestOptions = {
         method: 'POST',
         headers: myHeaders,
@@ -202,7 +213,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
             });
             setSelected([]);
             setSelectedtruck([]);
-            navigation.navigate('pdf', {data: data?.manifest_link});
+            navigation.navigate('pdf', { data: data?.manifest_link });
           } else {
             Toast.show({
               type: ALERT_TYPE.DANGER,
@@ -278,7 +289,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
             setTrailerDrop('');
             setTrailerPickup('');
             setSignature('');
-            navigation.navigate('pdf', {data: data?.manifest_link});
+            navigation.navigate('pdf', { data: data?.manifest_link });
           } else {
             Toast.show({
               type: ALERT_TYPE.DANGER,
@@ -356,7 +367,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
             setEndWeight('');
             setTotalWeight('');
             // navigation.goBack();
-            navigation.navigate('pdf', {data: data?.manifest_link});
+            navigation.navigate('pdf', { data: data?.manifest_link });
           } else {
             Toast.show({
               type: ALERT_TYPE.DANGER,
@@ -496,7 +507,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
           setEndWeight('');
           setTotalWeight('');
           // navigation.goBack();
-          navigation.navigate('pdf', {data: data?.manifest_link});
+          navigation.navigate('pdf', { data: data?.manifest_link });
         } else {
           Toast.show({
             type: ALERT_TYPE.DANGER,
@@ -520,8 +531,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   // console.log('response from selcted ==', selected);
   const LoadType = () => {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           <StatusBar
             barStyle={'light-content'}
             backgroundColor={Theme.colors.primaryColor}
@@ -581,8 +592,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
 
   const TireState = () => {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           <StatusBar
             barStyle={'light-content'}
             backgroundColor={Theme.colors.primaryColor}
@@ -617,7 +628,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
           <ScrollView
             showsVerticalScrollIndicator={false}
             scrollEnabled={scrollEnabled}
-            contentContainerStyle={{paddingBottom: 80}}>
+            contentContainerStyle={{ paddingBottom: 80 }}>
             <View
               style={{
                 height: 80,
@@ -774,7 +785,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                 Clear
               </Text>
             </Pressable>
-            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+            <View style={{ width: '90%', alignSelf: 'center', marginTop: 10 }}>
               <Button title={'Submit'} onPress={() => WeightHandle()} />
             </View>
           </ScrollView>
@@ -806,8 +817,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   };
   const WeigthState = () => {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           {showindicator === true ? <Loader /> : null}
           <StatusBar
             barStyle={'light-content'}
@@ -842,7 +853,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
           <ScrollView
             showsVerticalScrollIndicator={false}
             scrollEnabled={scrollEnabled}
-            contentContainerStyle={{paddingBottom: 10}}>
+            contentContainerStyle={{ paddingBottom: 10 }}>
             <View
               style={{
                 height: 80,
@@ -898,13 +909,13 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   borderRadius: 5,
                   paddingHorizontal: 10,
                 }}
-                placeholderStyle={{fontSize: 16}}
-                selectedTextStyle={{fontSize: 14}}
+                placeholderStyle={{ fontSize: 16 }}
+                selectedTextStyle={{ fontSize: 14 }}
                 inputSearchStyle={{
                   height: 40,
                   fontSize: 16,
                 }}
-                iconStyle={{width: 20, height: 20}}
+                iconStyle={{ width: 20, height: 20 }}
                 data={data1}
                 labelField="label"
                 valueField="value"
@@ -1084,13 +1095,13 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   borderRadius: 5,
                   paddingHorizontal: 10,
                 }}
-                placeholderStyle={{fontSize: 16}}
-                selectedTextStyle={{fontSize: 14}}
+                placeholderStyle={{ fontSize: 16 }}
+                selectedTextStyle={{ fontSize: 14 }}
                 inputSearchStyle={{
                   height: 40,
                   fontSize: 16,
                 }}
-                iconStyle={{width: 20, height: 20}}
+                iconStyle={{ width: 20, height: 20 }}
                 data={data2}
                 labelField="label"
                 valueField="value"
@@ -1236,13 +1247,13 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   borderRadius: 5,
                   paddingHorizontal: 10,
                 }}
-                placeholderStyle={{fontSize: 16}}
-                selectedTextStyle={{fontSize: 14}}
+                placeholderStyle={{ fontSize: 16 }}
+                selectedTextStyle={{ fontSize: 14 }}
                 inputSearchStyle={{
                   height: 40,
                   fontSize: 16,
                 }}
-                iconStyle={{width: 20, height: 20}}
+                iconStyle={{ width: 20, height: 20 }}
                 data={data3}
                 labelField="label"
                 valueField="value"
@@ -1290,7 +1301,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                       marginTop: 5,
                     }}
                     value={ag_med_truck_19_5_skid_steer}
-                    onChangeText={(txt)=> setag_med_truck_19_5_skid_steer(txt)}
+                    onChangeText={(txt) => setag_med_truck_19_5_skid_steer(txt)}
                   />
                 </View>
               ) : item === 'ag_med_truck_19_5_with_rim' ? (
@@ -1324,7 +1335,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                       marginTop: 5,
                     }}
                     value={ag_med_truck_19_5_with_rim}
-                    onChangeText={(txt)=> setag_med_truck_19_5_with_rim(txt)}
+                    onChangeText={(txt) => setag_med_truck_19_5_with_rim(txt)}
                   />
                 </View>
               ) : item === 'farm_tractor_last_two_digits' ? (
@@ -1358,7 +1369,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                       marginTop: 5,
                     }}
                     value={farm_tractor_last_two_digits}
-                    onChangeText={(txt)=> setfarm_tractor_last_two_digits(txt)}
+                    onChangeText={(txt) => setfarm_tractor_last_two_digits(txt)}
                   />
                 </View>
               ) : null;
@@ -1402,13 +1413,13 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   borderRadius: 5,
                   paddingHorizontal: 10,
                 }}
-                placeholderStyle={{fontSize: 16}}
-                selectedTextStyle={{fontSize: 14}}
+                placeholderStyle={{ fontSize: 16 }}
+                selectedTextStyle={{ fontSize: 14 }}
                 inputSearchStyle={{
                   height: 40,
                   fontSize: 16,
                 }}
-                iconStyle={{width: 20, height: 20}}
+                iconStyle={{ width: 20, height: 20 }}
                 data={data4}
                 labelField="label"
                 valueField="value"
@@ -1777,7 +1788,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                     }}
                   />
                 </View>
-              ) : item === '12' ? (
+              ) : item === 'odd_tire' ? (
                 <View
                   key={item}
                   style={{
@@ -1795,6 +1806,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                     Odd Tire / Inches
                   </Text>
                   <TextInput
+                    value={otr_tire}
+                    onChangeText={(txt) => set_otr_tires(txt)}
                     style={{
                       height: 50,
                       width: '100%',
@@ -1839,7 +1852,6 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   paddingHorizontal: 10,
                   marginTop: 5,
                 }}
-                editable={false}
                 value={payment}
                 onChangeText={txt => setPayment(txt)}
               />
@@ -1927,6 +1939,30 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   setBackUs(item?.value);
                 }}
                 renderItem={renderItem}
+              />
+
+<Text
+                style={{
+                  color: 'black',
+                  fontFamily: Theme.fontFamily.medium,
+                  fontSize: 13,
+                }}>
+                Note
+              </Text>
+              <TextInput
+                style={{
+                  height: 50,
+                  width: '100%',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: 'grey',
+                  color: 'black',
+                  fontSize: 14,
+                  fontFamily: Theme.fontFamily.medium,
+                  paddingHorizontal: 10,
+                  marginTop: 5,
+                }}
+                value={orderData?.notes}
               />
             </View>
 
@@ -2048,7 +2084,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                 Clear
               </Text>
             </Pressable>
-            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+            <View style={{ width: '90%', alignSelf: 'center', marginTop: 10 }}>
               <Button title={'Submit'} onPress={() => BoxtypeHandle()} />
             </View>
           </ScrollView>
@@ -2058,8 +2094,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   };
   const TDF = () => {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           <StatusBar
             barStyle={'light-content'}
             backgroundColor={Theme.colors.primaryColor}
@@ -2094,7 +2130,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
           <ScrollView
             showsVerticalScrollIndicator={false}
             scrollEnabled={scrollEnabled}
-            contentContainerStyle={{paddingBottom: 80}}>
+            contentContainerStyle={{ paddingBottom: 80 }}>
             <View
               style={{
                 height: 80,
@@ -2253,7 +2289,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
               </Text>
             </Pressable>
 
-            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+            <View style={{ width: '90%', alignSelf: 'center', marginTop: 10 }}>
               <Button title={'Submit'} onPress={() => Tdfhandle()} />
             </View>
           </ScrollView>
@@ -2263,8 +2299,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   };
   const Steel = () => {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           <StatusBar
             barStyle={'light-content'}
             backgroundColor={Theme.colors.primaryColor}
@@ -2299,7 +2335,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
           <ScrollView
             showsVerticalScrollIndicator={false}
             scrollEnabled={scrollEnabled}
-            contentContainerStyle={{paddingBottom: 80}}>
+            contentContainerStyle={{ paddingBottom: 80 }}>
             <View
               style={{
                 height: 80,
@@ -2489,7 +2525,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                 Clear
               </Text>
             </Pressable>
-            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+            <View style={{ width: '90%', alignSelf: 'center', marginTop: 10 }}>
               <Button title={'Submit'} onPress={() => SteelHandle()} />
             </View>
           </ScrollView>
@@ -2499,8 +2535,8 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   };
   const TrailerSwap = () => {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
           <StatusBar
             barStyle={'light-content'}
             backgroundColor={Theme.colors.primaryColor}
@@ -2535,7 +2571,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
           <ScrollView
             showsVerticalScrollIndicator={false}
             scrollEnabled={scrollEnabled}
-            contentContainerStyle={{paddingBottom: 80}}>
+            contentContainerStyle={{ paddingBottom: 80 }}>
             <View
               style={{
                 height: 80,
@@ -2629,6 +2665,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                   paddingHorizontal: 10,
                   marginTop: 5,
                 }}
+                value={orderData?.customers?.charge_type}
               />
             </View>
 
@@ -2691,7 +2728,7 @@ const [payment,setPayment]=useState(orderData?.payment_type)
                 Clear
               </Text>
             </Pressable>
-            <View style={{width: '90%', alignSelf: 'center', marginTop: 10}}>
+            <View style={{ width: '90%', alignSelf: 'center', marginTop: 10 }}>
               <Button title={'Submit'} onPress={() => SwapHandle()} />
             </View>
           </ScrollView>
@@ -2703,15 +2740,15 @@ const [payment,setPayment]=useState(orderData?.payment_type)
   return active === 'state'
     ? LoadType()
     : active === 'tire'
-    ? WeigthState()
-    : active === 'trailer_swap'
-    ? TrailerSwap()
-    : active === 'tdf'
-    ? TDF()
-    : active === 'steel'
-    ? Steel()
-    : active === 'box_truck_route'
-    ? WeigthState()
-    : TireState();
+      ? WeigthState()
+      : active === 'trailer_swap'
+        ? TrailerSwap()
+        : active === 'tdf'
+          ? TDF()
+          : active === 'steel'
+            ? Steel()
+            : active === 'box_truck_route'
+              ? WeigthState()
+              : TireState();
 };
 export default Generator;

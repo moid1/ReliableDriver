@@ -62,7 +62,7 @@ const Signin = ({navigation}) => {
           console.log('response from login  ====', data);
 
           setShowindicator(false);
-          if (data?.status === true && Number(data?.user?.type) === 2) {
+          if (data?.status === true ) {
             dispatch({
               type: types.LOGIN.success,
               payload: data,

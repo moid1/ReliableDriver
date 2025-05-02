@@ -287,12 +287,17 @@ import {
   ScrollView,
   TextInput,
   Pressable,
+  Linking
 } from 'react-native';
 import Theme from '../../../Theme/Theme';
 import {Icon} from '@rneui/themed';
 import {types} from '../../../store/actiontypes';
 import {useDispatch} from 'react-redux';
 import {ALERT_TYPE, Toast} from 'react-native-alert-notification';
+
+const openURL = (url) => {
+  Linking.openURL(url).catch((err) => console.error("Failed to open URL: ", err));
+};
 
 const Settings = ({navigation}) => {
   const dispatch = useDispatch();
@@ -401,15 +406,20 @@ const Settings = ({navigation}) => {
             }}
             source={require('../../../assets/privacy.png')}
           />
+          
+          <Pressable
+           onPress={() => openURL('https://manifest.reliabletiredisposal.online/privacy-policy')}
+          >
           <Text
             style={{
               color: 'black',
               fontSize: 14,
               fontFamily: Theme.fontFamily.semibold,
-              width: '70%',
+              width: '100%',
             }}>
             Privacy policy
           </Text>
+          </Pressable>
           <Icon
             name="chevron-small-right"
             type="entypo"
